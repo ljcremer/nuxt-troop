@@ -4,6 +4,12 @@
     <div class="text-gray-800 font-semibold troop">Timeline</div>
     <div ref="timelineRef">Some text</div>
     <div>{{ refItems }}</div>
+    <client-only>
+      <mapbox-map
+        accessToken="pk.eyJ1Ijoiam9zaG1jZCIsImEiOiJja3NqMmtydmwwaGZ5MnlveDh0MjZpZHpmIn0.EzFXQaLlJrjaJGhKVH-HgA"
+      >
+      </mapbox-map>
+    </client-only>
   </div>
 </template>
 
@@ -11,6 +17,7 @@
 import { Timeline } from "vis-timeline/standalone";
 import { DataSet } from "vis-data/standalone"; //https://visjs.github.io/vis-data/data/dataset.html
 import { ref, onMounted, computed, watch, watchEffect } from "vue";
+import { MapboxMap } from "vue-mapbox-ts";
 
 const timelineRef = ref(null);
 const itemRef = ref([

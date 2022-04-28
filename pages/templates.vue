@@ -12,4 +12,3 @@ import { useTemplatesStore } from "~/store/template";
 const filtersStore = useTemplatesStore();
 const filtersList = filtersStore.getTemplatesList;
 </script>
-getTemplatesList
