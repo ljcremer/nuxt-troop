@@ -1,6 +1,6 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
 <template>
-  <div>
+  <div class="h-screen w-screen">
     <div class="text-gray-800 font-semibold troop">Timeline</div>
     <div ref="timelineRef">Some text</div>
     <div>{{ refItems }}</div>
