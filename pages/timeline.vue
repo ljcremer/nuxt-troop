@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { Timeline } from "vis-timeline/standalone";
-import { DataSet } from "vis-data/standalone";
+import { DataSet } from "vis-data/standalone"; //https://visjs.github.io/vis-data/data/dataset.html
 import { ref, onMounted, computed, watch, watchEffect } from "vue";
 
 const timelineRef = ref(null);
@@ -69,6 +69,8 @@ watchEffect(() => console.log(items.value.get()));
 
 watch(refItems, (value) => {
   console.log(refItems.value);
+  items.value.remove(5);
+  items.value.remove(6);
   items.value.add([
     { id: 5, content: "item 5", start: "2014-04-25" },
     { id: 6, content: "item 6", start: "2014-04-27", type: "point" },
