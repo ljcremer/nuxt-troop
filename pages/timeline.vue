@@ -2,14 +2,17 @@
 <template>
   <div class="h-screen w-screen">
     <div class="text-gray-800 font-semibold troop">Timeline</div>
-    <div ref="timelineRef">Some text</div>
+    <div ref="timelineRef">Some text2</div>
     <div>{{ refItems }}</div>
+    
     <client-only>
       <mapbox-map
         accessToken="pk.eyJ1Ijoiam9zaG1jZCIsImEiOiJja3NqMmtydmwwaGZ5MnlveDh0MjZpZHpmIn0.EzFXQaLlJrjaJGhKVH-HgA"
       >
       </mapbox-map>
+      
     </client-only>
+    
   </div>
 </template>
 
@@ -92,4 +95,7 @@ onMounted(() => {
     console.log(items.value.get(1));
   });
 });
+
+
+
 </script>

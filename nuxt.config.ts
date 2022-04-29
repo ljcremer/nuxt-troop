@@ -13,5 +13,8 @@ export default defineNuxtConfig({
     },
   },
   modules: ["@pinia/nuxt"],
-  css: ["~/assets/css/tailwind.css"],
+  css: ["~/assets/css/tailwind.css",
+    "primevue/resources/themes/saga-blue/theme.css",        //theme
+    "primevue/resources/primevue.min.css",                 //core css
+    "primeicons/primeicons.css"],
 });
