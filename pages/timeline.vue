@@ -20,7 +20,6 @@
 import { Timeline } from "vis-timeline/standalone";
 import { DataSet } from "vis-data/standalone"; //https://visjs.github.io/vis-data/data/dataset.html
 import { ref, onMounted, computed, watch, watchEffect } from "vue";
-import { MapboxMap } from "vue-mapbox-ts";
 
 const timelineRef = ref(null);
 const itemRef = ref([
