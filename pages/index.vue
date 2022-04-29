@@ -132,7 +132,10 @@ const items = ref([
   },
   {
     label: 'Quit',
-    icon: 'pi pi-fw pi-power-off'
+    icon: 'pi pi-fw pi-power-off',
+    command: () => {
+      console.log('quit')
+    }
   }
 ]);
 const onImageRightClick = (event) => {
