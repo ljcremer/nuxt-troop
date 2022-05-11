@@ -20,6 +20,18 @@
               </slot>
             </template>
           </mapbox-marker>
+          <div v-if="item.bookmarks && item.active">
+            <div v-for="bookmark in item.bookmarks">
+              <mapbox-marker v-if=item.bookmarks :lng-lat="[bookmark.location.lat, bookmark.location.lon]">
+                <template #icon>
+                  <slot>
+                    <div class="bg-red-700 h-2 w-2 rounded-full">
+                      </div>
+                  </slot>
+                </template>
+              </mapbox-marker>
+            </div>
+          </div>
         </div>
       </mapbox-map>
 
@@ -79,12 +91,12 @@ const itemRef = ref([
     start: "2014-04-10",
     end: "2014-04-11",
     className: "troop",
-    active: true,
+    active: false,
     location: {
       lat: 0,
       lon: 0
     },
-    zoom: 4,
+    zoom: 8,
 
     editable: {
       add: true, // add new items by double tapping
@@ -93,6 +105,29 @@ const itemRef = ref([
       remove: true, // delete an item by tapping the delete button top right
       overrideItems: false, // allow these options to override item.editable
     },
+    bookmarks: [
+      {
+        id: "b1",
+        location: {
+          lat: 0.5,
+          lon: 0.5
+        },
+      },
+      {
+        id: "b2",
+        location: {
+          lat: 0,
+          lon: -0.5
+        },
+      },
+      {
+        id: "b3",
+        location: {
+          lat: 0.3,
+          lon: 0.75
+        },
+      },
+    ],
   },
   {
     id: 2, content: "item 2222", start: "2014-04-12", end: "2014-04-13",
@@ -174,9 +209,9 @@ const clickMarker = async ($event: any) => {
   console.log(timelineRef);
   timeline.value.setSelection($event.id);
 
-    itemRef.value.forEach((item) => {
-      item.active = item.id === $event.id;
-    });
+  itemRef.value.forEach((item) => {
+    item.active = item.id === $event.id;
+  });
 
 };
 
