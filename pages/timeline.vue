@@ -105,7 +105,7 @@ const itemRef = ref([
       lat: 6,
       lon: 6
     },
-    zoom: 0,
+    zoom: 3,
   },
 ]);
 // Create a DataSet (allows two way data-binding)
@@ -141,8 +141,8 @@ onMounted(() => {
     console.log(items.value.get(properties.items));
     itemRef.value.forEach((item) => {
       if (item.id == properties.items) {
-          mapCenter.value = [item.location.lat, item.location.lon];
-        // mapZoom.value = item.zoom;
+          // mapCenter.value = [item.location.lat, item.location.lon];
+         mapZoom.value = item.zoom;
 
         // console.log("FLYTO");
         // map.value.flyTo({
