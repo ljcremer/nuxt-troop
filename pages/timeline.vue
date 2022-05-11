@@ -14,7 +14,7 @@
           <mapbox-marker v-if=item.location :lng-lat="[item.location.lat, item.location.lon]">
             <template #icon>
               <slot>
-                <div :class="item.active ? 'bg-green-300' : 'bg-red-300'" class="h-10 w-10 rounded-full">
+                <div @click="clickMarker(item)" :class="item.active ? 'bg-green-300' : 'bg-red-300'" class="h-10 w-10 rounded-full">
                   {{ item.location.lat }}</div>
               </slot>
             </template>
@@ -35,6 +35,7 @@ import { ref, onMounted, computed, watch, watchEffect } from "vue";
 
 const mapZoom = ref(0);
 const mapCenter = ref([0, 0]);
+const timeline = ref();
 const map = ref(null);
 const mapPromise = async ($map: any) => {
   // console.log($map);
@@ -134,8 +135,8 @@ watch(refItems, (value) => {
 
 onMounted(() => {
   // Create a Timeline
-  var timeline = new Timeline(timelineRef.value, items.value, options);
-  timeline.on("select", function (properties) {
+  timeline.value = new Timeline(timelineRef.value, items.value, options);
+  timeline.value.on("select", function (properties) {
     console.log("selected item: " + properties.items);
     console.log(properties)
     console.log(items.value.get(properties.items));
@@ -159,6 +160,11 @@ onMounted(() => {
   });
 });
 
+const clickMarker = async ($event: any) => {
+  console.log(timelineRef);
+  timeline.value.setSelection($event.id);
+
+};
 
 
 </script>
