@@ -4,14 +4,15 @@
     <div class="text-gray-800 font-semibold">Timeline</div>
     <div ref="timelineRef"></div>
 
-
+        <!-- mapStyle="mapbox://styles/joshmcd/cksj2p8p6hfa118qqqdq59lbb" -->
 
     <client-only>
       <mapbox-map
         accessToken="pk.eyJ1Ijoiam9zaG1jZCIsImEiOiJja3NqMmtydmwwaGZ5MnlveDh0MjZpZHpmIn0.EzFXQaLlJrjaJGhKVH-HgA"
+mapStyle="mapbox://styles/joshmcd/cksj2p8p6hfa118qqqdq59lbb"
         :zoom="mapZoom" :center="mapCenter" @loaded="mapPromise($event)">
         <div v-for="item in itemRef">
-          <mapbox-marker v-if=item.location :lng-lat="[item.location.lat, item.location.lon]">
+          <mapbox-marker v-if=item.location :lng-lat="[item.location.lon, item.location.lat]">
             <template #icon>
               <slot>
                 <div @click="clickMarker(item)" :class="item.active ? 'bg-green-500' : 'bg-blue-500'"
@@ -22,11 +23,11 @@
           </mapbox-marker>
           <div v-if="item.bookmarks && item.active">
             <div v-for="bookmark in item.bookmarks">
-              <mapbox-marker v-if=item.bookmarks :lng-lat="[bookmark.location.lat, bookmark.location.lon]">
+              <mapbox-marker v-if=item.bookmarks :lng-lat="[bookmark.location.lon, bookmark.location.lat]">
                 <template #icon>
                   <slot>
-                    <div class="bg-red-700 h-2 w-2 rounded-full">
-                      </div>
+                    <div class="bg-red-800 h-4 w-4 rounded-full">
+                    </div>
                   </slot>
                 </template>
               </mapbox-marker>
@@ -44,6 +45,8 @@
 
 import { Timeline } from "vis-timeline/standalone";
 import { DataSet } from "vis-data/standalone"; //https://visjs.github.io/vis-data/data/dataset.html`;
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 // import mapboxgl from 'mapbox-gl';
 // import {MapboxDirections} from '@mapbox/mapbox-gl-directions';
 import { ref, onMounted, computed, watch, watchEffect } from "vue";
@@ -54,13 +57,40 @@ import { ref, onMounted, computed, watch, watchEffect } from "vue";
 //   profile: 'mapbox/cycling'
 // });
 
-const mapZoom = ref(0);
-const mapCenter = ref([0, 0]);
+
+const mapZoom = ref(10);
+
+const mapCenter = ref([-3.703790, 40.416775]);
+// const mapCenter = ref([40.816775, -3.703790]);
 const timeline = ref();
 const map = ref(null);
 const mapPromise = async ($map: any) => {
+  $map.addSource("iso", {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: [],
+    },
+  });
+
+  $map.addLayer(
+    {
+      id: "isoLayer",
+      type: "fill",
+      source: "iso",
+      layout: {},
+      paint: {
+        "fill-color": "#5a3fc0",
+        "fill-opacity": 0.3,
+      },
+    },
+    "poi-label"
+  );
+
+
+
   // console.log($map);
-  // map.value = $map;
+  map.value = $map;
   // map.value.flyTo({
   //   // These options control the ending camera position: centered at
   //   // the target, at zoom level 9, and north up.
@@ -93,10 +123,10 @@ const itemRef = ref([
     className: "troop",
     active: false,
     location: {
-      lat: 0,
-      lon: 0
+      lat: 40.416775,
+      lon: -3.703790
     },
-    zoom: 8,
+    zoom: 12,
 
     editable: {
       add: true, // add new items by double tapping
@@ -109,22 +139,22 @@ const itemRef = ref([
       {
         id: "b1",
         location: {
-          lat: 0.5,
-          lon: 0.5
+          lat: 40.436775,
+          lon: -3.703790
         },
       },
       {
         id: "b2",
         location: {
-          lat: 0,
-          lon: -0.5
+          lat: 40.426775,
+          lon: -3.733790
         },
       },
       {
         id: "b3",
         location: {
-          lat: 0.3,
-          lon: 0.75
+          lat: 40.406775,
+          lon: -3.683790
         },
       },
     ],
@@ -132,25 +162,25 @@ const itemRef = ref([
   {
     id: 2, content: "item 2222", start: "2014-04-12", end: "2014-04-13",
     location: {
-      lat: 2,
-      lon: 2
+      lat: 41.416775,
+      lon: -3.703790
     },
-    zoom: 6,
+    zoom: 9,
   },
   {
     id: 3, content: "item 3a", start: "2014-04-14", end: "2014-04-15", location: {
-      lat: 4,
-      lon: 4
+      lat: 40.416775,
+      lon: -2.703790
     },
-    zoom: 1,
+    zoom: 13,
   },
   {
     id: 4, content: "item 4", start: "2014-04-16", end: "2014-04-19",
     location: {
-      lat: 6,
-      lon: 6
+      lat: 40.816775,
+      lon: -3.703790
     },
-    zoom: 3,
+    zoom: 11,
   },
 ]);
 // Create a DataSet (allows two way data-binding)
@@ -213,7 +243,30 @@ const clickMarker = async ($event: any) => {
     item.active = item.id === $event.id;
   });
 
+  getIso(map.value, $event.location.lat, $event.location.lon, 20)
+
 };
 
+mapboxgl.accessToken =
+  "pk.eyJ1Ijoic2lhcyIsImEiOiJja3ppZGRlYmIzbTJ5MnZuOXJtbzlmODMwIn0.Ce4bOkoz_VcMEiDXZ5GFTA";
+const urlBase = "https://api.mapbox.com/isochrone/v1/mapbox/";
+let profile = "cycling";
+
+
+async function getIso($map: any, lat: number, lon: number, minutes: 200) {
+  console.log("getIso")
+
+  const query = await fetch(
+    `${urlBase}${profile}/${lon},${lat}?contours_minutes=${minutes}&polygons=true&access_token=${mapboxgl.accessToken}`,
+    { method: "GET" }
+  );
+  const data = await query.json();
+  var isoBuffA = data;
+
+  console.log(data);
+  console.log(isoBuffA);
+  // Set the 'iso' source's data to what's returned by the API query
+  $map.getSource("iso").setData(data);
+}
 
 </script>
