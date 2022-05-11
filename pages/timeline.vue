@@ -1,34 +1,58 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
 <template>
   <div class="h-screen w-screen">
-    <div class="text-gray-800 font-semibold troop">Timeline</div>
-    <div ref="timelineRef">Some text2</div>
-    <div>{{ refItems }}</div>
-    
+    <div class="text-gray-800 font-semibold">Timeline</div>
+    <div ref="timelineRef"></div>
+
+
+
     <client-only>
       <mapbox-map
         accessToken="pk.eyJ1Ijoiam9zaG1jZCIsImEiOiJja3NqMmtydmwwaGZ5MnlveDh0MjZpZHpmIn0.EzFXQaLlJrjaJGhKVH-HgA"
-      >
+        :zoom="mapZoom"
+        :center="mapCenter"
+        >
+        <div v-for="item in itemRef">
+          <mapbox-marker v-if=item.location :lng-lat="[item.location.lat, item.location.lon]">
+            <template #icon>
+              <slot>
+                <div :class="item.active ? 'bg-green-300' : 'bg-red-300'" class="h-10 w-10 rounded-full">
+                  {{ item.location.lat }}</div>
+              </slot>
+            </template>
+          </mapbox-marker>
+        </div>
       </mapbox-map>
-      
+
     </client-only>
-    
+
   </div>
 </template>
 
 <script setup lang="ts">
+
 import { Timeline } from "vis-timeline/standalone";
 import { DataSet } from "vis-data/standalone"; //https://visjs.github.io/vis-data/data/dataset.html
 import { ref, onMounted, computed, watch, watchEffect } from "vue";
+
+const mapZoom = ref(0);
+const mapCenter = ref([0,0]);
 
 const timelineRef = ref(null);
 const itemRef = ref([
   {
     id: 1,
-    content: "",
+    content: "111",
     start: "2014-04-10",
-    end: "2014-04-19",
+    end: "2014-04-11",
     className: "troop",
+    active: true,
+    location: {
+      lat: 0,
+      lon: 0
+    },
+    zoom: 4,
+
     editable: {
       add: true, // add new items by double tapping
       updateTime: true, // drag items horizontally
@@ -37,34 +61,33 @@ const itemRef = ref([
       overrideItems: false, // allow these options to override item.editable
     },
   },
-  { id: 2, content: "item 2", start: "2014-04-14" },
-  { id: 3, content: "item 3", start: "2014-04-18" },
-  { id: 4, content: "item 4", start: "2014-04-16", end: "2014-04-19" },
-  { id: 5, content: "item 5", start: "2014-04-25" },
-  { id: 6, content: "item 6", start: "2014-04-27", type: "point" },
+  {
+    id: 2, content: "item 2222", start: "2014-04-12", end: "2014-04-13",
+    location: {
+      lat: 2,
+      lon: 2
+    },
+    zoom: 6,
+  },
+  {
+    id: 3, content: "item 3a", start: "2014-04-14", end: "2014-04-15", location: {
+      lat: 4,
+      lon: 4
+    },
+    zoom: 1,
+  },
+  {
+    id: 4, content: "item 4", start: "2014-04-16", end: "2014-04-19",
+    location: {
+      lat: 6,
+      lon: 6
+    },
+    zoom: 0,
+  },
 ]);
 // Create a DataSet (allows two way data-binding)
-var items2 = new DataSet(itemRef.value);
 var items: any = ref(
-  new DataSet([
-    {
-      id: 1,
-      content: "",
-      start: "2014-04-10",
-      end: "2014-04-19",
-      className: "troop",
-      editable: {
-        add: true, // add new items by double tapping
-        updateTime: true, // drag items horizontally
-        updateGroup: true, // drag items from one group to another
-        remove: true, // delete an item by tapping the delete button top right
-        overrideItems: false, // allow these options to override item.editable
-      },
-    },
-    { id: 2, content: "item 2", start: "2014-04-14" },
-    { id: 3, content: "item 3", start: "2014-04-18" },
-    { id: 4, content: "item 4", start: "2014-04-16", end: "2014-04-19" },
-  ])
+  new DataSet(itemRef.value)
 );
 
 // Configuration for the Timeline
@@ -74,7 +97,7 @@ const refItems = computed(() => {
   return items.value.get();
 });
 
-watchEffect(() => console.log(items.value.get()));
+watchEffect(() => console.log(items.active));
 
 watch(refItems, (value) => {
   console.log(refItems.value);
@@ -90,8 +113,19 @@ onMounted(() => {
   // Create a Timeline
   var timeline = new Timeline(timelineRef.value, items.value, options);
   timeline.on("select", function (properties) {
-    console.log("selected items: " + properties.items);
-    console.log(items.value.get(1));
+    console.log("selected item: " + properties.items);
+    console.log(properties)
+    console.log(items.value.get(properties.items));
+    itemRef.value.forEach((item) => {
+      if (item.id == properties.items) {
+        //  mapCenter.value = [item.location.lat, item.location.lon];
+        mapZoom.value = item.zoom;
+       
+      }
+      item.active = item.id === properties.items[0];
+      console.log(item.id, item.active, item.id === properties.items);
+    });
+
   });
 });
 

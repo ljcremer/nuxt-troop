@@ -12,6 +12,7 @@ export default defineNuxtConfig({
       },
     },
   },
+  // plugins: [{ src: '~/plugins/vue-plyr', mode: 'client' }],
   modules: ["@pinia/nuxt"],
   css: ["~/assets/css/tailwind.css",
     "primevue/resources/themes/saga-blue/theme.css",        //theme
