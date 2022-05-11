@@ -14,8 +14,8 @@
           <mapbox-marker v-if=item.location :lng-lat="[item.location.lat, item.location.lon]">
             <template #icon>
               <slot>
-                <div @click="clickMarker(item)" :class="item.active ? 'bg-green-300' : 'bg-red-300'"
-                  class="h-10 w-10 rounded-full">
+                <div @click="clickMarker(item)" :class="item.active ? 'bg-green-500' : 'bg-blue-500'"
+                  class="h-5 w-5 rounded-full">
                   {{ item.location.lat }}</div>
               </slot>
             </template>
