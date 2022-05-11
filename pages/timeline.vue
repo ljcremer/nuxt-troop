@@ -9,9 +9,7 @@
     <client-only>
       <mapbox-map
         accessToken="pk.eyJ1Ijoiam9zaG1jZCIsImEiOiJja3NqMmtydmwwaGZ5MnlveDh0MjZpZHpmIn0.EzFXQaLlJrjaJGhKVH-HgA"
-        :zoom="mapZoom"
-        :center="mapCenter"
-        >
+        :zoom="mapZoom" :center="mapCenter" @loaded="mapPromise($event)">
         <div v-for="item in itemRef">
           <mapbox-marker v-if=item.location :lng-lat="[item.location.lat, item.location.lon]">
             <template #icon>
@@ -36,7 +34,32 @@ import { DataSet } from "vis-data/standalone"; //https://visjs.github.io/vis-dat
 import { ref, onMounted, computed, watch, watchEffect } from "vue";
 
 const mapZoom = ref(0);
-const mapCenter = ref([0,0]);
+const mapCenter = ref([0, 0]);
+const map = ref(null);
+const mapPromise = async ($map: any) => {
+  // console.log($map);
+  // map.value = $map;
+  // map.value.flyTo({
+  //   // These options control the ending camera position: centered at
+  //   // the target, at zoom level 9, and north up.
+  //   center: [5, 5],
+  //   zoom: 9,
+  //   bearing: 0,
+
+  //   // These options control the flight curve, making it move
+  //   // slowly and zoom out almost completely before starting
+  //   // to pan.
+  //   speed: 1, // make the flying slow
+  //   curve: 1, // change the speed at which it zooms out
+
+  //   // This can be any easing function: it takes a number between
+  //   // 0 and 1 and returns another number between 0 and 1.
+  //   easing: (t) => t,
+
+  //   // this animation is considered essential with respect to prefers-reduced-motion
+  //   essential: true
+  // });
+}
 
 const timelineRef = ref(null);
 const itemRef = ref([
@@ -118,9 +141,16 @@ onMounted(() => {
     console.log(items.value.get(properties.items));
     itemRef.value.forEach((item) => {
       if (item.id == properties.items) {
-        //  mapCenter.value = [item.location.lat, item.location.lon];
-        mapZoom.value = item.zoom;
-       
+          mapCenter.value = [item.location.lat, item.location.lon];
+        // mapZoom.value = item.zoom;
+
+        // console.log("FLYTO");
+        // map.value.flyTo({
+        //   center: [item.location.lat, item.location.lon],
+        //   zoom: item.zoom,
+        //   speed: 1, // make the flying slow
+        // });
+
       }
       item.active = item.id === properties.items[0];
       console.log(item.id, item.active, item.id === properties.items);
