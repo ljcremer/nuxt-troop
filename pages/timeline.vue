@@ -14,7 +14,8 @@
           <mapbox-marker v-if=item.location :lng-lat="[item.location.lat, item.location.lon]">
             <template #icon>
               <slot>
-                <div @click="clickMarker(item)" :class="item.active ? 'bg-green-300' : 'bg-red-300'" class="h-10 w-10 rounded-full">
+                <div @click="clickMarker(item)" :class="item.active ? 'bg-green-300' : 'bg-red-300'"
+                  class="h-10 w-10 rounded-full">
                   {{ item.location.lat }}</div>
               </slot>
             </template>
@@ -30,8 +31,16 @@
 <script setup lang="ts">
 
 import { Timeline } from "vis-timeline/standalone";
-import { DataSet } from "vis-data/standalone"; //https://visjs.github.io/vis-data/data/dataset.html
+import { DataSet } from "vis-data/standalone"; //https://visjs.github.io/vis-data/data/dataset.html`;
+// import mapboxgl from 'mapbox-gl';
+// import {MapboxDirections} from '@mapbox/mapbox-gl-directions';
 import { ref, onMounted, computed, watch, watchEffect } from "vue";
+
+// var directions = new MapboxDirections({
+//   accessToken: 'YOUR-MAPBOX-ACCESS-TOKEN',
+//   unit: 'metric',
+//   profile: 'mapbox/cycling'
+// });
 
 const mapZoom = ref(0);
 const mapCenter = ref([0, 0]);
@@ -142,8 +151,8 @@ onMounted(() => {
     console.log(items.value.get(properties.items));
     itemRef.value.forEach((item) => {
       if (item.id == properties.items) {
-          // mapCenter.value = [item.location.lat, item.location.lon];
-         mapZoom.value = item.zoom;
+        // mapCenter.value = [item.location.lat, item.location.lon];
+        mapZoom.value = item.zoom;
 
         // console.log("FLYTO");
         // map.value.flyTo({
@@ -161,8 +170,13 @@ onMounted(() => {
 });
 
 const clickMarker = async ($event: any) => {
+  $event.active = true;
   console.log(timelineRef);
   timeline.value.setSelection($event.id);
+
+    itemRef.value.forEach((item) => {
+      item.active = item.id === $event.id;
+    });
 
 };
 
