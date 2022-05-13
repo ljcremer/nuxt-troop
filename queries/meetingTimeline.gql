@@ -1,0 +1,79 @@
+query MeetingTimeline($meetingTimelineId: ID) {
+  meetingTimeline(id: $meetingTimelineId) {
+    data {
+      attributes {
+        name
+        eventsList {
+          ... on ComponentMeetingEvent {
+            id
+            eventType
+            place {
+              data {
+                attributes {
+                  name
+                  fullAddress
+                  mapsUrl
+                  images {
+                    data {
+                      attributes {
+                        url
+                      }
+                    }
+                  }
+                  latitude
+                  longitude
+                }
+              }
+            }
+            description
+            startAt
+            endAt
+          }
+          ... on ComponentMeetingTransfer {
+            id
+            description
+            url
+            startAt
+            endAt
+            origin {
+              data {
+                attributes {
+                  name
+                  fullAddress
+                  mapsUrl
+                  latitude
+                  longitude
+                  images {
+                    data {
+                      attributes {
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            destination {
+              data {
+                attributes {
+                  name
+                  fullAddress
+                  mapsUrl
+                  latitude
+                  longitude
+                  images {
+                    data {
+                      attributes {
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

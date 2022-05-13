@@ -1,6 +1,6 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
 <template>
-  <div class="h-screen w-screen">
+  <div class="h-96 w-screen">
     <div class="text-gray-800 font-semibold">Timeline</div>
     <div ref="timelineRef"></div>
 
@@ -38,6 +38,10 @@ mapStyle="mapbox://styles/joshmcd/cksj2p8p6hfa118qqqdq59lbb"
 
     </client-only>
 
+    <video class="h-72 w-1/2 py-10" ref="videoPlayer" controls>
+      <source src="https://www.trooptravel.com/wp-content/uploads/2022/02/220217_Location_Animation3.mp4" />
+    </video> 
+
   </div>
 </template>
 
@@ -58,6 +62,7 @@ import { ref, onMounted, computed, watch, watchEffect } from "vue";
 // });
 
 
+const videoPlayer = ref();
 const mapZoom = ref(10);
 
 const mapCenter = ref([-3.703790, 40.416775]);
@@ -208,6 +213,22 @@ watch(refItems, (value) => {
 });
 
 onMounted(() => {
+  videoPlayer.value.ontimeupdate = () => {
+    const seconds = parseInt(videoPlayer.value.currentTime, 10)
+    if (seconds === 3) {
+      const itemId = 2
+      // Trigger a click on the second item and pause the video
+      itemRef.value.forEach((item) => {
+        if (item.id == itemId) {
+          mapZoom.value = item.zoom;
+        }
+        item.active = item.id === itemId;
+      });
+      timeline.value.setSelection(itemId);
+      videoPlayer.value.pause()
+    }
+  }
+  
   // Create a Timeline
   timeline.value = new Timeline(timelineRef.value, items.value, options);
   timeline.value.on("select", function (properties) {
