@@ -1,55 +1,81 @@
-query MeetingTimeline($meetingTimelineId: ID) {
-  meetingTimeline(id: $meetingTimelineId) {
+query GetMeetingTemplate($meetingTemplateId: ID) {
+  meetingTemplate(id: $meetingTemplateId) {
     data {
+      id
       attributes {
+        initialLatitude
+        initialLongitude
+        initialZoom
         name
-        eventsList {
+        description
+        createdAt
+        updatedAt
+        publishedAt
+        video {
+          data {
+            id
+            attributes {
+              url
+            }
+          }
+        }
+        timeline {
           ... on ComponentMeetingEvent {
             id
             eventType
-            place {
+            description
+            startAt
+            endAt
+            meeting_place {
               data {
+                id
                 attributes {
                   name
                   fullAddress
-                  mapsUrl
+                  latitude
+                  longitude
                   images {
                     data {
+                      id
                       attributes {
                         url
                       }
                     }
                   }
-                  latitude
-                  longitude
+                  createdAt
+                  updatedAt
                 }
               }
             }
-            description
-            startAt
-            endAt
+            videoTriggers {
+              id
+              event
+              seconds
+            }
           }
           ... on ComponentMeetingTransfer {
             id
             description
-            url
             startAt
             endAt
             origin {
               data {
+                id
                 attributes {
                   name
                   fullAddress
-                  mapsUrl
                   latitude
                   longitude
                   images {
                     data {
+                      id
                       attributes {
                         url
                       }
                     }
                   }
+                  createdAt
+                  updatedAt
                 }
               }
             }
@@ -57,17 +83,8 @@ query MeetingTimeline($meetingTimelineId: ID) {
               data {
                 attributes {
                   name
-                  fullAddress
-                  mapsUrl
                   latitude
                   longitude
-                  images {
-                    data {
-                      attributes {
-                        url
-                      }
-                    }
-                  }
                 }
               }
             }

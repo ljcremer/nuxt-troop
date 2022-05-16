@@ -3,12 +3,17 @@
   import { Timeline } from "vis-timeline/standalone";
   import { DataSet } from "vis-data/standalone";
 
+  const mapRef = ref(null);
   const timelineRef = ref(null);
   const timeline = ref(null);
   const timelineEvents = ref(null);
   const map = ref({
     center: [-3.703790, 40.416775],
     zoom: 6,
+    flyToOptions: {
+      minZoom: 10,
+      speed: 1
+    }
   });
 
   const { data } = await useAsyncData('meetingTimeline', () => GqlMeetingTimeline({
@@ -50,10 +55,14 @@
   <div class="text-gray-800 font-semibold">{{ data.meetingTimeline.data.attributes.name }}</div>
   <div ref="timelineRef"></div>
   <client-only>
-    <mapbox-map ref="mapRef"
-    accessToken="pk.eyJ1Ijoiam9zaG1jZCIsImEiOiJja3NqMmtydmwwaGZ5MnlveDh0MjZpZHpmIn0.EzFXQaLlJrjaJGhKVH-HgA"
-  mapStyle="mapbox://styles/joshmcd/cksj2p8p6hfa118qqqdq59lbb"
-    :zoom="map.zoom" :center="map.center">
+    <mapbox-map 
+      ref="mapRef"
+      accessToken="pk.eyJ1Ijoiam9zaG1jZCIsImEiOiJja3NqMmtydmwwaGZ5MnlveDh0MjZpZHpmIn0.EzFXQaLlJrjaJGhKVH-HgA"
+      mapStyle="mapbox://styles/joshmcd/cksj2p8p6hfa118qqqdq59lbb"
+      :zoom="map.zoom" 
+      :center="map.center"
+      :flyToOptions="map.flyToOptions"
+      >
       <div v-for="item in timelineEvents">
         <mapbox-popup v-if=item.location :lng-lat="[item.location.lon, item.location.lat]" close-on-click="false">
           <div>{{ item.location.name }}</div>
